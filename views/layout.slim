@@ -1,0 +1,28 @@
+doctype html
+html
+  head
+    title = @title
+    == bootstrap_assets
+    link href="/css/application.css" rel="stylesheet"
+  body
+    .container-fluid
+      .row-fluid
+        .span12
+          h2 Header
+      .row-fluid
+        .span2
+          ul.nav.nav-list
+            li: a[href="/"] Home
+            li.nav-header Users
+            li: a Summary
+            li
+              a
+                = "List "
+                span.badge 8
+            li.divider
+            li: a[href="/"] Logout
+        .span10
+          == yield
+      .row-fluid
+        .span12
+          p Footer
