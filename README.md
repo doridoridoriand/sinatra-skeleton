@@ -1,5 +1,6 @@
 # Install and Run
 ```
-$ bundle install --path .bundle/gems --jobs 4
+$ bundle config set path '.bundle/gems'
+$ bundle install --jobs 4
 $ bundle exec guard -i
 ```
