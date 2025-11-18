@@ -4,7 +4,7 @@ class WebApp < Sinatra::Base
     register Sinatra::Reloader
   end
 
-  # セッションのセキュリティ設定を強化
+  # Secure session configuration
   configure do
     set :session_secret, ENV.fetch('SESSION_SECRET') { SecureRandom.hex(64) }
     use Rack::Session::Cookie,
