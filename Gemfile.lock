@@ -77,6 +77,8 @@ GEM
     rack-session (2.1.1)
       base64 (>= 0.1.0)
       rack (>= 3.0.0)
+    rack-test (2.2.0)
+      rack (>= 1.3)
     rb-fsevent (0.9.4)
     rb-inotify (0.9.5)
       ffi (>= 0.5.0)
@@ -142,6 +144,7 @@ DEPENDENCIES
   pry-rescue
   pry-stack_explorer
   rack-livereload
+  rack-test
   redcarpet
   rspec
   sass
@@ -151,3 +154,6 @@ DEPENDENCIES
   slim
   tapp
   thin
+
+BUNDLED WITH
+   2.7.2
