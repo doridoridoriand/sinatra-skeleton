@@ -3,7 +3,22 @@ class WebApp < Sinatra::Base
   configure :development do
     register Sinatra::Reloader
   end
-  enable :sessions
+
+  # Secure session configuration
+  configure do
+    set :session_secret, ENV.fetch('SESSION_SECRET') { SecureRandom.hex(64) }
+    use Rack::Session::Cookie,
+      key: 'rack.session',
+      path: '/',
+      httponly: true,
+      secure: production?,
+      same_site: :lax,
+      secret: settings.session_secret
+  end
+
+  # Enable Rack::Protection for CSRF and other security protections
+  use Rack::Protection
+  use Rack::Protection::AuthenticityToken
 
   get "/css/application.css" do
     sass :application
