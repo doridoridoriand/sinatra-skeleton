@@ -7,6 +7,7 @@ gem "slim"
 gem "redcarpet"
 gem "sass"
 gem "sinatra-twitter-bootstrap" # need `require "sinatra/twitter-bootstrap"` in config.ru
+gem "rack-protection"
 
 group :development do
   if RUBY_VERSION >= '2.0.0'
@@ -15,7 +16,6 @@ group :development do
     gem "pry-debugger"
   end
   gem "pry-rescue"
-  gem "pry-stack_explorer"
   gem "tapp"
 
   gem "rspec"
