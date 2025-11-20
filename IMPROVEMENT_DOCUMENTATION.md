@@ -22,9 +22,14 @@
 - `sinatra-twitter-bootstrap` gemは非推奨とされている可能性がある
 - 依存関係に古いgemバージョンが含まれている可能性あり
 
-### 3. セキュリティ対策の不足
-- セッション管理の設定が単純で、セキュリティ強化のための対策が不足している
-- CSRF対策やXSS対策などの基本的なセキュリティ対策が実装されていない
+### 3. セキュリティ対策の不足 ✅ **改善済み**
+- ~~セッション管理の設定が単純で、セキュリティ強化のための対策が不足している~~ → **実装完了**
+  - セキュアなセッション設定を実装（httponly, secure, same_site属性）
+  - SESSION_SECRET環境変数によるセッションシークレットの管理
+- ~~CSRF対策やXSS対策などの基本的なセキュリティ対策が実装されていない~~ → **実装完了**
+  - Rack::Protectionを有効化してCSRF対策を実装
+  - Rack::Protection::AuthenticityTokenでトークンベース認証を実装
+  - SlimテンプレートのデフォルトエスケープによるXSS対策
 
 ### 4. テストカバレッジの不足
 - RSpecが含まれているものの、実際のテストコードが存在しない
@@ -91,3 +96,56 @@
 ## 今後の展望
 
 このプロジェクトは、Sinatraを使ったWebアプリケーション開発の学習用として非常に有用ですが、実際の本番環境での利用には多くの改善が必要です。特に、セキュリティ、テスト、アーキテクチャの観点から見直しが必要です。
+
+## 実装済みの改善
+
+### セキュリティ強化 (Issue #13)
+
+#### 1. セッション管理の強化
+以下のセキュリティ設定を実装しました：
+```ruby
+configure do
+  set :session_secret, ENV.fetch('SESSION_SECRET') { SecureRandom.hex(64) }
+  use Rack::Session::Cookie,
+    key: 'rack.session',
+    path: '/',
+    httponly: true,          # JavaScriptからのアクセスを防止
+    secure: production?,      # HTTPS接続でのみCookieを送信（本番環境）
+    same_site: :lax,         # CSRF攻撃を緩和
+    secret: settings.session_secret
+end
+```
+
+**セキュリティ上の利点:**
+- `httponly: true` - XSS攻撃によるセッションハイジャックを防止
+- `secure: production?` - 本番環境でHTTPS通信を強制
+- `same_site: :lax` - クロスサイトリクエストフォージェリ（CSRF）攻撃を緩和
+- SESSION_SECRET環境変数 - セッションシークレットの安全な管理
+
+#### 2. CSRF対策の実装
+Rack::Protectionを有効化し、CSRF攻撃から保護します：
+```ruby
+use Rack::Protection
+use Rack::Protection::AuthenticityToken
+```
+
+**保護機能:**
+- フォーム送信時のCSRFトークン検証
+- 不正なクロスサイトリクエストのブロック
+- セッション固定攻撃の防止
+- その他のRack::Protectionによる一般的な攻撃からの保護
+
+#### 3. XSS対策
+Slimテンプレートエンジンは、デフォルトでHTML自動エスケープを提供しています：
+- `=` 演算子を使用した出力は自動的にエスケープされる
+- ユーザー入力が安全に表示される
+
+#### 環境変数の設定方法
+本番環境では、SESSION_SECRET環境変数を設定してください：
+```bash
+export SESSION_SECRET=$(openssl rand -hex 64)
+# または
+export SESSION_SECRET=your_secure_random_secret_key
+```
+
+開発環境では、SESSION_SECRETが未設定の場合、自動的にランダムな値が生成されます。
