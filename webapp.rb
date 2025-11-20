@@ -3,6 +3,7 @@ class WebApp < Sinatra::Base
   configure :development do
     register Sinatra::Reloader
   end
+
   configure :test do
     set :protection, false
   end
