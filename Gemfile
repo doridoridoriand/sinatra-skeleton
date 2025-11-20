@@ -18,8 +18,6 @@ group :development do
   gem "pry-stack_explorer"
   gem "tapp"
 
-  gem "rspec"
-
   gem "thin", require: false
   gem "guard", "~> 2.0", require: false
   gem "guard-shotgun"
@@ -27,4 +25,9 @@ group :development do
   gem "guard-livereload", require: false
 
   gem "forgery"
+end
+
+group :test do
+  gem "rspec"
+  gem "rack-test"
 end
