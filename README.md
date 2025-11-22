@@ -3,6 +3,7 @@
 ## Installation
 ```
 $ bundle config set --local path '.bundle/gems'
+
 $ bundle install --jobs 4
 ```
 
