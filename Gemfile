@@ -6,8 +6,8 @@ gem "sinatra-contrib", require: "sinatra/reloader"
 gem "slim"
 gem "redcarpet"
 gem "sass"
-gem "sinatra-twitter-bootstrap" # need `require "sinatra/twitter-bootstrap"` in config.ru
 gem "rack-protection"
+gem "sinatra-twitter-bootstrap" # need `require "sinatra/twitter-bootstrap"` in config.ru
 
 group :development do
   if RUBY_VERSION >= '2.0.0'
@@ -18,8 +18,6 @@ group :development do
   gem "pry-rescue"
   gem "tapp"
 
-  gem "rspec"
-
   gem "thin", require: false
   gem "guard", "~> 2.0", require: false
   gem "guard-shotgun"
@@ -27,4 +25,9 @@ group :development do
   gem "guard-livereload", require: false
 
   gem "forgery"
+end
+
+group :test do
+  gem "rspec"
+  gem "rack-test"
 end

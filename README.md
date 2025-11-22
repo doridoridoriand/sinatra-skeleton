@@ -22,6 +22,12 @@ $ export SESSION_SECRET=$(openssl rand -hex 64)
 $ bundle exec guard -i
 ```
 
+## Running Tests
+```
+$ bundle config set --local without 'development'
+$ bundle exec rspec
+```
+
 ## Security Features
 このアプリケーションには以下のセキュリティ対策が実装されています：
 - セキュアなセッション管理（httponly, secure, same_site設定）

@@ -6,8 +6,13 @@ class WebApp < Sinatra::Base
     register Sinatra::Reloader
   end
 
+  configure :test do
+    set :protection, false
+  end
+
   # セッションのセキュリティ設定を強化
   configure do
+    # Note: SESSION_SECRET must be set in production to persist sessions across restarts
     set :session_secret, ENV.fetch('SESSION_SECRET') { SecureRandom.hex(64) }
     use Rack::Session::Cookie,
       key: 'rack.session',
@@ -80,8 +85,6 @@ class WebApp < Sinatra::Base
     slim :error_403
   end
 
-  enable :sessions
-
   get "/css/application.css" do
     sass :application
   end
@@ -94,13 +97,17 @@ class WebApp < Sinatra::Base
   get "/dashboard" do
     @title = "Dashboard"
     # generate random data for demo.
-    @list = (1..80).map do |i|
-      {
-        id: i,
-        name: Forgery(:name).full_name,
-        email: Forgery(:internet).email_address,
-        joined: Forgery(:date).date.to_time
-      }
+    if settings.development?
+      @list = (1..80).map do |i|
+        {
+          id: i,
+          name: Forgery(:name).full_name,
+          email: Forgery(:internet).email_address,
+          joined: Forgery(:date).date.to_time
+        }
+      end
+    else
+      @list = []
     end
     slim :dashboard
   end
