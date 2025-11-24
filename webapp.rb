@@ -1,7 +1,6 @@
 require_relative 'lib/errors'
 
 class WebApp < Sinatra::Base
-  register Sinatra::Twitter::Bootstrap::Assets
   configure :development do
     register Sinatra::Reloader
   end

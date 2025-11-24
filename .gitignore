@@ -1,5 +1,6 @@
 .sass-cache/*
 .bundle/
+vendor/bundle/
 
 # 環境変数ファイル（セキュリティ上の理由で除外）
 # Environment files (excluded for security reasons)
