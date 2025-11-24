@@ -1,0 +1,31 @@
+current directory: /home/runner/work/sinatra-skeleton/sinatra-skeleton/vendor/bundle/ruby/3.2.0/gems/byebug-4.0.5/ext/byebug
+/usr/bin/ruby3.2 -I/usr/lib/ruby/vendor_ruby extconf.rb
+creating Makefile
+
+current directory: /home/runner/work/sinatra-skeleton/sinatra-skeleton/vendor/bundle/ruby/3.2.0/gems/byebug-4.0.5/ext/byebug
+make DESTDIR\= sitearchdir\=./.gem.20251124-3474-t17snv sitelibdir\=./.gem.20251124-3474-t17snv clean
+
+current directory: /home/runner/work/sinatra-skeleton/sinatra-skeleton/vendor/bundle/ruby/3.2.0/gems/byebug-4.0.5/ext/byebug
+make DESTDIR\= sitearchdir\=./.gem.20251124-3474-t17snv sitelibdir\=./.gem.20251124-3474-t17snv
+compiling breakpoint.c
+In file included from /usr/include/ruby-3.2.0/ruby/internal/stdbool.h:40,
+                 from /usr/include/ruby-3.2.0/ruby/backward/2/bool.h:22,
+                 from /usr/include/ruby-3.2.0/ruby/defines.h:74,
+                 from /usr/include/ruby-3.2.0/ruby/ruby.h:25,
+                 from /usr/include/ruby-3.2.0/ruby.h:38,
+                 from ./byebug.h:4,
+                 from breakpoint.c:1:
+breakpoint.c:46:37: error: two or more data types in declaration specifiers
+   46 | brkpt_set_enabled(VALUE self, VALUE bool)
+      |                                     ^~~~
+breakpoint.c: In function ‘brkpt_set_enabled’:
+breakpoint.c:51:32: error: expected expression before ‘_Bool’
+   51 |   return breakpoint->enabled = bool;
+      |                                ^~~~
+breakpoint.c:52:1: error: control reaches end of non-void function [-Werror=return-type]
+   52 | }
+      | ^
+cc1: all warnings being treated as errors
+make: *** [Makefile:248: breakpoint.o] Error 1
+
+make failed, exit code 2

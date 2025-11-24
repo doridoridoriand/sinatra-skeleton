@@ -2,8 +2,6 @@ GEM
   remote: https://rubygems.org/
   specs:
     base64 (0.3.0)
-    binding_of_caller (0.7.2)
-      debug_inspector (>= 0.0.1)
     byebug (4.0.5)
       columnize (= 0.9.0)
     celluloid (0.16.0)
@@ -11,7 +9,6 @@ GEM
     coderay (1.1.0)
     columnize (0.9.0)
     daemons (1.2.2)
-    debug_inspector (0.0.2)
     diff-lcs (1.2.5)
     em-websocket (0.5.1)
       eventmachine (>= 0.12.9)
@@ -64,9 +61,6 @@ GEM
     pry-rescue (1.4.2)
       interception (>= 0.5)
       pry
-    pry-stack_explorer (0.4.9.2)
-      binding_of_caller (>= 0.7)
-      pry (>= 0.9.11)
     rack (3.2.3)
     rack-livereload (0.3.15)
       rack
@@ -142,8 +136,8 @@ DEPENDENCIES
   guard-shotgun
   pry-byebug
   pry-rescue
-  pry-stack_explorer
   rack-livereload
+  rack-protection
   rack-test
   redcarpet
   rspec

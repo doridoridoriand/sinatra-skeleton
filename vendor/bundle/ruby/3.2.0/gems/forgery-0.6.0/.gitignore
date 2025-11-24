@@ -1,0 +1,6 @@
+/doc
+/pkg
+.DS_Store
+.rakeTasks
+.rbc
+.iml
