@@ -132,9 +132,9 @@ class WebApp < Sinatra::Base
       @list = (1..80).map do |i|
         {
           id: i,
-          name: Forgery(:name).full_name,           # ランダムな名前
-          email: Forgery(:internet).email_address,  # ランダムなメールアドレス
-          joined: Forgery(:date).date.to_time       # ランダムな日付
+          name: Forgery(:name).full_name,
+          email: Forgery(:internet).email_address,
+          joined: Forgery(:date).date.to_time
         }
       end
     else
