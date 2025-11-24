@@ -15,13 +15,14 @@ html
         .col-2
           ul.nav.flex-column
             li.nav-item: a.nav-link[href="/"] Home
-            li.nav-item: h6.text-muted.mt-2 Users
+            li.nav-item.mt-2
+              h6.nav-link.disabled.text-muted Users
             li.nav-item: a.nav-link Summary
             li.nav-item
               a.nav-link
                 = "List "
                 span.badge.bg-secondary 8
-            li.nav-item: hr.dropdown-divider
+            li.nav-item: hr
             li.nav-item: a.nav-link[href="/"] Logout
         .col-10
           == yield
