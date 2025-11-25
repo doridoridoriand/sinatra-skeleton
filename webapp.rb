@@ -5,6 +5,7 @@ require_relative 'lib/errors'
 # メインアプリケーションクラス
 # Sinatra::Baseを継承してモジュラースタイルのアプリケーションを構築
 class WebApp < Sinatra::Base
+  PROJECTS_MUTEX = Mutex.new
   use Rack::MethodOverride
 
   # 開発環境用の設定
@@ -38,10 +39,11 @@ class WebApp < Sinatra::Base
       same_site: :lax,           # クロスサイトリクエスト時の挙動を制御（CSRF緩和）
       secret: settings.session_secret
 
+    # NOTE: In-memory store for development/demo only. Not thread-safe in production; swap with DB.
     set :projects, [
       { id: 1, name: "Customer Discovery", owner: "Product", status: "In Progress", description: "Interview and synthesize pain points before the next planning cycle." },
       { id: 2, name: "Design System Refresh", owner: "Design", status: "Planned", description: "Lightweight refresh of spacing, color tokens, and form components." },
-      { id: 3, name: "Metrics Dashboard", owner: "Data", status: "Blocked", description: "Ship a self-serve KPI dashboard; blocked waiting on tracking plan." }
+      { id: 3, name: "Metrics Dashboard", owner: "Data", status: "Blocked", description: "Ship a self-serve KPI dashboard; blocked waiting on tracking plan." },
     ]
     set :next_project_id, 4
   end
@@ -121,7 +123,7 @@ class WebApp < Sinatra::Base
 
   helpers do
     def csrf_token
-      session[:csrf] ||= SecureRandom.base64(32)
+      Rack::Protection::AuthenticityToken.token(session)
     end
 
     def project_statuses
@@ -133,9 +135,11 @@ class WebApp < Sinatra::Base
     end
 
     def next_project_id!
-      id = settings.next_project_id
-      settings.next_project_id = id + 1
-      id
+      PROJECTS_MUTEX.synchronize do
+        id = settings.next_project_id
+        settings.next_project_id = id + 1
+        id
+      end
     end
 
     def find_project!(id)
@@ -220,8 +224,9 @@ class WebApp < Sinatra::Base
     attrs = project_params
     validate_project!(attrs)
 
-    project = attrs.merge(id: next_project_id!)
-    project_store << project
+    project = PROJECTS_MUTEX.synchronize do
+      attrs.merge(id: next_project_id!).tap { |p| project_store << p }
+    end
     redirect "/projects/#{project[:id]}?created=1"
   end
 
@@ -238,17 +243,21 @@ class WebApp < Sinatra::Base
   end
 
   patch "/projects/:id" do
-    project = find_project!(params[:id].to_i)
     attrs = project_params
     validate_project!(attrs)
 
-    project.merge!(attrs)
-    redirect "/projects/#{project[:id]}?updated=1"
+    PROJECTS_MUTEX.synchronize do
+      project = find_project!(params[:id].to_i)
+      project.merge!(attrs)
+      redirect "/projects/#{project[:id]}?updated=1"
+    end
   end
 
   delete "/projects/:id" do
-    project = find_project!(params[:id].to_i)
-    project_store.delete_if { |p| p[:id] == project[:id] }
+    PROJECTS_MUTEX.synchronize do
+      project = find_project!(params[:id].to_i)
+      project_store.delete_if { |p| p[:id] == project[:id] }
+    end
     redirect "/projects?deleted=1"
   end
 end
