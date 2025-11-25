@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1] - 2025-11-25
+
 ### Added
 - 包括的なREADME.mdの作成
 - CONTRIBUTING.mdの追加（コントリビューションガイドライン）
@@ -15,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - README.mdを大幅に拡充（プロジェクト概要、技術スタック、セットアップ手順など）
+- 開発サーバーの起動手順を更新（Guard と Thin の両方を記載）
 
 ### Security
 - セキュアなセッション管理の実装
@@ -46,5 +49,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Guardfileの設定（ファイル監視と自動リロード）
 - Thinサーバーの使用
 
-[Unreleased]: https://github.com/doridoridoriand/sinatra-skeleton/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/doridoridoriand/sinatra-skeleton/releases/tag/v0.1.0
+ [Unreleased]: https://github.com/doridoridoriand/sinatra-skeleton/compare/v0.1.0...HEAD
+ [0.1.1]: https://github.com/doridoridoriand/sinatra-skeleton/compare/v0.1.0...v0.1.1
+ [0.1.0]: https://github.com/doridoridoriand/sinatra-skeleton/releases/tag/v0.1.0

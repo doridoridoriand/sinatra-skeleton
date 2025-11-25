@@ -11,6 +11,6 @@ end
 
 # Shotgunの設定
 # Thinサーバーを使用して開発サーバーを起動
-# すべてのインターフェース(0.0.0.0)でポート3000をリッスン
-guard :shotgun, server: "thin", host: "0.0.0.0", port: "3000" do
+# すべてのインターフェース(0.0.0.0)でポート3333をリッスン
+guard :shotgun, server: "thin", host: "0.0.0.0", port: "3333" do
 end

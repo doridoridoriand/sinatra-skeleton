@@ -7,23 +7,25 @@ gem "slim"
 gem "redcarpet"
 gem "sass"
 gem "rack-protection"
+gem "rack", "~> 3.2"
 
 group :development do
-  if RUBY_VERSION >= '2.0.0'
-    gem "pry-byebug"
-  else
-    gem "pry-debugger"
-  end
-  gem "pry-rescue"
+  gem "byebug", "~> 11.1"
+
+
+
   gem "tapp"
 
   gem "thin", require: false
   gem "guard", "~> 2.0", require: false
+  gem "lumberjack", "~> 1.2"
   gem "guard-shotgun"
   gem "rack-livereload"
   gem "guard-livereload", require: false
 
   gem "forgery"
+  gem "eventmachine", "~> 1.2"
+  gem "ffi", "~> 1.15"
 end
 
 group :test do

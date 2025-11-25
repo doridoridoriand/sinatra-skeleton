@@ -118,13 +118,17 @@ export SESSION_SECRET=$(openssl rand -hex 64)
 
 ### アプリケーションの起動
 
-Guardを使用して開発サーバーを起動します。ファイルの変更を検知して自動的にリロードされます：
+開発サーバーは `bundle exec guard -i` で起動できますが、プロダクションやシンプルな起動には `bundle exec thin start -R config.ru -p 3333 -e production` も使用できます。ファイルの変更を検知して自動的にリロードされます：
 
 ```bash
+# 開発時（Guard + LiveReload）
 bundle exec guard -i
+
+# 本番またはシンプル起動
+bundle exec thin start -R config.ru -p 3333 -e production
 ```
 
-ブラウザで `http://localhost:3000` にアクセスしてください。
+ブラウザで `http://localhost:3333` にアクセスしてください。
 
 ### Guardの機能
 
@@ -181,7 +185,7 @@ Passenger、Puma、Unicornなど、お好みのRackサーバーを使用でき�
 
 ```bash
 # 例: rackupを使用する場合
-bundle exec rackup -p 3000 -E production
+bundle exec rackup -p 3333 -E production
 ```
 
 ### 環境変数の管理
