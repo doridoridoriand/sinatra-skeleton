@@ -6,7 +6,7 @@
 
 現在のプロジェクトはSinatraフレームワークを使用したシンプルなWebアプリケーションのスケルトンであり、以下の技術スタックを採用しています：
 - Sinatra (Webフレームワーク)
-- Slim (テンプレートエンジン)
+- ERB (テンプレートエンジン)
 - Sass (CSSプリプロセッサ)
 - Twitter Bootstrap (UIフレームワーク)
 - Guard (開発時の自動リロード)
@@ -29,7 +29,7 @@
 - ~~CSRF対策やXSS対策などの基本的なセキュリティ対策が実装されていない~~ → **実装完了**
   - Rack::Protectionを有効化してCSRF対策を実装
   - Rack::Protection::AuthenticityTokenでトークンベース認証を実装
-  - SlimテンプレートのデフォルトエスケープによるXSS対策
+- ERB (`escape_html: true`) のエスケープによるXSS対策
 
 ### 4. テストカバレッジの不足
 - RSpecが含まれているものの、実際のテストコードが存在しない
@@ -136,8 +136,8 @@ use Rack::Protection::AuthenticityToken
 - その他のRack::Protectionによる一般的な攻撃からの保護
 
 #### 3. XSS対策
-Slimテンプレートエンジンは、デフォルトでHTML自動エスケープを提供しています：
-- `=` 演算子を使用した出力は自動的にエスケープされる
+ERBテンプレートは `set :erb, escape_html: true` の設定により自動的にHTMLをエスケープします：
+- `<%=` で出力した値は自動的にエスケープされる
 - ユーザー入力が安全に表示される
 
 #### 環境変数の設定方法

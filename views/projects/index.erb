@@ -1,0 +1,70 @@
+<div class="d-flex align-items-center justify-content-between mb-3">
+  <div>
+    <p class="text-uppercase text-muted small mb-1">Projects</p>
+    <h1 class="h3 mb-0">Project list</h1>
+  </div>
+  <div class="d-flex gap-2">
+    <a class="btn btn-outline-secondary" href="/dashboard">Back to dashboard</a>
+    <a class="btn btn-primary" href="/projects/new">New project</a>
+  </div>
+</div>
+
+<% if params[:deleted] %>
+  <div class="alert alert-success" role="alert">
+    プロジェクトを削除しました。
+  </div>
+<% end %>
+
+<div class="mb-3 d-flex flex-wrap gap-2 align-items-center">
+  <span class="text-muted small me-2">Filter</span>
+  <a class="badge <%= @active_status_filter.nil? ? 'text-bg-primary' : 'text-bg-light' %>" href="/projects">All</a>
+  <% project_statuses.each do |status| %>
+    <a class="badge <%= status == @active_status_filter ? 'text-bg-primary' : 'text-bg-light' %>" href="/projects?status=<%= ERB::Util.url_encode(status) %>"><%= status %></a>
+  <% end %>
+</div>
+
+<div class="card">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead class="table-light">
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Name</th>
+            <th scope="col">Owner</th>
+            <th scope="col">Status</th>
+            <th scope="col">Updated</th>
+            <th scope="col" class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if @projects.any? %>
+            <% @projects.each do |project| %>
+              <tr>
+                <td class="text-muted">#<%= project[:id] %></td>
+                <td><a href="/projects/<%= project[:id] %>"><%= project[:name] %></a></td>
+                <td><%= project[:owner] %></td>
+                <td>
+                  <span class="badge text-bg-<%= project[:status] == 'Done' ? 'success' : project[:status] == 'Blocked' ? 'danger' : 'primary' %>"><%= project[:status] %></span>
+                </td>
+                <td class="text-muted">Just now</td>
+                <td class="text-end">
+                  <a class="btn btn-sm btn-outline-secondary" href="/projects/<%= project[:id] %>/edit">Edit</a>
+                  <form class="d-inline" method="post" action="/projects/<%= project[:id] %>" onsubmit="return confirm('Delete this project?');">
+                    <input type="hidden" name="_method" value="delete">
+                    <input type="hidden" name="authenticity_token" value="<%= csrf_token %>">
+                    <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                  </form>
+                </td>
+              </tr>
+            <% end %>
+          <% else %>
+            <tr>
+              <td colspan="6" class="text-center text-muted py-4">No projects found for this filter.</td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,9 +1,13 @@
 # カスタムエラークラスを読み込み
+require "securerandom"
 require_relative 'lib/errors'
 
 # メインアプリケーションクラス
 # Sinatra::Baseを継承してモジュラースタイルのアプリケーションを構築
 class WebApp < Sinatra::Base
+  PROJECTS_MUTEX = Mutex.new
+  use Rack::MethodOverride
+
   # 開発環境用の設定
   configure :development do
     # ファイル変更時の自動リロード機能を有効化
@@ -19,12 +23,13 @@ class WebApp < Sinatra::Base
 
   # セッションのセキュリティ設定を強化
   configure do
+    set :erb, escape_html: true
     # セッションシークレットキーの設定
     # 本番環境では環境変数SESSION_SECRETを必ず設定すること
     # 開発環境では未設定の場合、ランダムな値を自動生成
     # Note: SESSION_SECRET must be set in production to persist sessions across restarts
     set :session_secret, ENV.fetch('SESSION_SECRET') { SecureRandom.hex(64) }
-    
+
     # Rack::Session::Cookieを使用したセキュアなセッション管理
     use Rack::Session::Cookie,
       key: 'rack.session',       # セッションCookieの名前
@@ -33,6 +38,14 @@ class WebApp < Sinatra::Base
       secure: production?,        # 本番環境ではHTTPS接続のみでCookieを送信
       same_site: :lax,           # クロスサイトリクエスト時の挙動を制御（CSRF緩和）
       secret: settings.session_secret
+
+    # NOTE: In-memory store for development/demo only. Not thread-safe in production; swap with DB.
+    set :projects, [
+      { id: 1, name: "Customer Discovery", owner: "Product", status: "In Progress", description: "Interview and synthesize pain points before the next planning cycle." },
+      { id: 2, name: "Design System Refresh", owner: "Design", status: "Planned", description: "Lightweight refresh of spacing, color tokens, and form components." },
+      { id: 3, name: "Metrics Dashboard", owner: "Data", status: "Blocked", description: "Ship a self-serve KPI dashboard; blocked waiting on tracking plan." },
+    ]
+    set :next_project_id, 4
   end
 
   # CSRF対策の実装
@@ -52,7 +65,7 @@ class WebApp < Sinatra::Base
       json error: 'Not Found', status: 404
     else
       # 通常のリクエストの場合はエラーページを表示
-      slim :error_404, layout: :layout_1col
+      erb :error_404, layout: :layout_1col
     end
   end
 
@@ -71,7 +84,7 @@ class WebApp < Sinatra::Base
       json error: 'Internal Server Error', status: 500
     else
       # 通常のリクエストの場合はエラーページを表示
-      slim :error_500, layout: :layout_1col
+      erb :error_500, layout: :layout_1col
     end
   end
 
@@ -87,25 +100,74 @@ class WebApp < Sinatra::Base
     @title = "入力エラー"
     @error_message = e.message
     status 422  # Unprocessable Entity
-    slim :error_validation
+    erb :error_validation, layout: :layout_1col
   end
 
   # リソースが見つからないエラー
   error MyApp::NotFoundError do |e|
     status 404
-    slim :error_404
+    erb :error_404, layout: :layout_1col
   end
 
   # 認証が必要なエラー（未ログイン状態でのアクセスなど）
   error MyApp::UnauthorizedError do |e|
     status 401  # Unauthorized
-    slim :error_401
+    erb :error_401, layout: :layout_1col
   end
 
   # アクセス権限がないエラー（ログイン済みだが権限不足）
   error MyApp::ForbiddenError do |e|
     status 403  # Forbidden
-    slim :error_403
+    erb :error_403, layout: :layout_1col
+  end
+
+  helpers do
+    def csrf_token
+      Rack::Protection::AuthenticityToken.token(session)
+    end
+
+    def project_statuses
+      ["Planned", "In Progress", "Blocked", "Done"]
+    end
+
+    def project_store
+      settings.projects
+    end
+
+    def next_project_id!
+      PROJECTS_MUTEX.synchronize do
+        id = settings.next_project_id
+        settings.next_project_id = id + 1
+        id
+      end
+    end
+
+    def find_project!(id)
+      project_store.find { |p| p[:id] == id } || raise(MyApp::NotFoundError, "Project not found")
+    end
+
+    def validate_project!(attrs)
+      name = attrs[:name].to_s.strip
+      owner = attrs[:owner].to_s.strip
+      status = attrs[:status].to_s.strip
+
+      raise MyApp::ValidationError, "プロジェクト名を入力してください。" if name.empty?
+      raise MyApp::ValidationError, "担当者を入力してください。" if owner.empty?
+      raise MyApp::ValidationError, "ステータスを選択してください。" if status.empty?
+      raise MyApp::ValidationError, "不正なステータスです。" unless project_statuses.include?(status)
+    end
+
+    def project_params
+      status = params[:status].to_s.strip
+      status = "Planned" if status.empty?
+
+      {
+        name: params[:name].to_s.strip,
+        owner: params[:owner].to_s.strip,
+        status: status,
+        description: params[:description].to_s.strip
+      }
+    end
   end
 
   # CSSファイルの生成エンドポイント
@@ -117,27 +179,85 @@ class WebApp < Sinatra::Base
   # ルートパス - トップページ
   get "/" do
     @title = "Welcome"
-    slim :index, :layout => :layout_1col
+    erb :index, layout: :layout_1col
   end
 
   # ダッシュボードページ
   get "/dashboard" do
     @title = "Dashboard"
-    
-    # デモ用のランダムデータを生成（開発環境のみ）
-    if settings.development?
-      @list = (1..80).map do |i|
-        {
-          id: i,
-          name: Forgery(:name).full_name,
-          email: Forgery(:internet).email_address,
-          joined: Forgery(:date).date.to_time
-        }
+
+    @projects = project_store
+    @recent_people =
+      if settings.development?
+        (1..12).map do
+          {
+            name: Forgery(:name).full_name,
+            role: %w[PM Designer Engineer Analyst].sample,
+            joined: Forgery(:date).date.to_time
+          }
+        end
+      else
+        []
       end
+    erb :dashboard
+  end
+
+  # Projects CRUD
+  get "/projects" do
+    @title = "Projects"
+    @active_status_filter = params[:status]
+    @projects = if @active_status_filter && project_statuses.include?(@active_status_filter)
+      project_store.select { |p| p[:status] == @active_status_filter }
     else
-      # 本番環境では空のリストを返す
-      @list = []
+      project_store
     end
-    slim :dashboard
+    erb :"projects/index"
+  end
+
+  get "/projects/new" do
+    @title = "New project"
+    @project = { status: "Planned" }
+    erb :"projects/new"
+  end
+
+  post "/projects" do
+    attrs = project_params
+    validate_project!(attrs)
+
+    project = PROJECTS_MUTEX.synchronize do
+      attrs.merge(id: next_project_id!).tap { |p| project_store << p }
+    end
+    redirect "/projects/#{project[:id]}?created=1"
+  end
+
+  get "/projects/:id" do
+    @project = find_project!(params[:id].to_i)
+    @title = @project[:name]
+    erb :"projects/show"
+  end
+
+  get "/projects/:id/edit" do
+    @project = find_project!(params[:id].to_i)
+    @title = "#{@project[:name]} を編集"
+    erb :"projects/edit"
+  end
+
+  patch "/projects/:id" do
+    attrs = project_params
+    validate_project!(attrs)
+
+    PROJECTS_MUTEX.synchronize do
+      project = find_project!(params[:id].to_i)
+      project.merge!(attrs)
+      redirect "/projects/#{project[:id]}?updated=1"
+    end
+  end
+
+  delete "/projects/:id" do
+    PROJECTS_MUTEX.synchronize do
+      project = find_project!(params[:id].to_i)
+      project_store.delete_if { |p| p[:id] == project[:id] }
+    end
+    redirect "/projects?deleted=1"
   end
 end

@@ -1,0 +1,37 @@
+<form action="<%= form_action %>" method="post" class="needs-validation" novalidate>
+  <% if http_method && http_method != "post" %>
+    <input type="hidden" name="_method" value="<%= http_method %>">
+  <% end %>
+  <input type="hidden" name="authenticity_token" value="<%= csrf_token %>">
+
+  <div class="mb-3">
+    <label class="form-label" for="name">Project name</label>
+    <input class="form-control" id="name" name="name" type="text" value="<%= project[:name] %>" required>
+    <div class="form-text">短く具体的な名前を付けてください。</div>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label" for="owner">Owner</label>
+    <input class="form-control" id="owner" name="owner" type="text" value="<%= project[:owner] %>" required>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label" for="status">Status</label>
+    <select class="form-select" id="status" name="status" required>
+      <option value="" <%= project[:status].to_s.empty? ? "selected" : "" %> disabled>Select status</option>
+      <% project_statuses.each do |status| %>
+        <option value="<%= status %>" <%= project[:status] == status ? "selected" : "" %>><%= status %></option>
+      <% end %>
+    </select>
+  </div>
+
+  <div class="mb-4">
+    <label class="form-label" for="description">Notes</label>
+    <textarea class="form-control" id="description" name="description" rows="4"><%= project[:description] %></textarea>
+  </div>
+
+  <div class="d-flex gap-2">
+    <button class="btn btn-primary" type="submit"><%= submit_label %></button>
+    <a class="btn btn-outline-secondary" href="/projects">Cancel</a>
+  </div>
+</form>

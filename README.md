@@ -28,7 +28,7 @@ Sinatraを使用したWebアプリケーションのスケルトンプロジェ�
 - 🔄 Guard + LiveReloadによる自動リロード
 - 🎨 Bootstrap統合
 - ✅ RSpec テストフレームワーク
-- 📝 Slimテンプレートエンジン
+- 📝 ERBテンプレート
 - 🎨 Sassプリプロセッサ
 - 🐛 デバッグツール（pry-byebug）
 
@@ -36,7 +36,7 @@ Sinatraを使用したWebアプリケーションのスケルトンプロジェ�
 
 - **Ruby** 3.2+ (推奨: 3.0以上)
 - **Sinatra** 4.x - 軽量Webフレームワーク
-- **Slim** 3.x - テンプレートエンジン
+- **ERB** - テンプレートエンジン
 - **Sass** 3.x - CSSプリプロセッサ
 - **Bootstrap** - UIフレームワーク (sinatra-twitter-bootstrap経由)
 - **Rack::Protection** - セキュリティミドルウェア
@@ -64,13 +64,14 @@ Sinatraを使用したWebアプリケーションのスケルトンプロジェ�
 ├── config.rb                # アプリケーション設定（該当する場合）
 ├── lib/                     # ライブラリ・ヘルパーファイル
 │   └── errors.rb           # カスタムエラークラス定義
-├── views/                   # Slimテンプレートファイル
-│   ├── layout.slim         # 基本レイアウト
-│   ├── layout_1col.slim    # 1カラムレイアウト
-│   ├── index.slim          # トップページ
-│   ├── dashboard.slim      # ダッシュボード
-│   ├── application.sass    # アプリケーションスタイル
-│   └── error_*.slim        # エラーページテンプレート
+├── views/                   # ERBテンプレートファイル
+│   ├── layout.erb           # 基本レイアウト
+│   ├── layout_1col.erb      # 1カラムレイアウト
+│   ├── index.erb            # トップページ
+│   ├── dashboard.erb        # ダッシュボード
+│   ├── projects/*.erb       # プロジェクトCRUD用テンプレート
+│   ├── application.sass     # アプリケーションスタイル
+│   └── error_*.erb          # エラーページテンプレート
 ├── spec/                    # テストファイル
 │   ├── spec_helper.rb      # RSpec設定
 │   └── requests/           # リクエストスペック
@@ -211,7 +212,7 @@ bundle exec rackup -p 3333 -E production
 
 ### XSS対策
 
-- Slimテンプレートのデフォルトエスケープ - クロスサイトスクリプティング対策
+- ERBの自動エスケープ（`set :erb, escape_html: true`）- クロスサイトスクリプティング対策
 
 ### エラーハンドリング
 
@@ -232,6 +233,6 @@ bundle exec rackup -p 3333 -E production
 ## 参考資料
 
 - [Sinatra公式ドキュメント](http://sinatrarb.com/)
-- [Slim テンプレートエンジン](http://slim-lang.com/)
+- [ERB リファレンス](https://docs.ruby-lang.org/ja/latest/library/erb.html)
 - [RSpec](https://rspec.info/)
 - [Rack::Protection](https://github.com/sinatra/sinatra/tree/main/rack-protection)
