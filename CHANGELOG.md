@@ -49,5 +49,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Guardfileの設定（ファイル監視と自動リロード）
 - Thinサーバーの使用
 
-[Unreleased]: https://github.com/doridoridoriand/sinatra-skeleton/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/doridoridoriand/sinatra-skeleton/releases/tag/v0.1.0
+ [Unreleased]: https://github.com/doridoridoriand/sinatra-skeleton/compare/v0.1.0...HEAD
+ [0.1.1]: https://github.com/doridoridoriand/sinatra-skeleton/compare/v0.1.0...v0.1.1
+ [0.1.0]: https://github.com/doridoridoriand/sinatra-skeleton/releases/tag/v0.1.0
