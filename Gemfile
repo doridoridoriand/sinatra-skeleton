@@ -7,7 +7,6 @@ gem "slim"
 gem "redcarpet"
 gem "sass"
 gem "rack-protection"
-gem "sinatra-twitter-bootstrap" # need `require "sinatra/twitter-bootstrap"` in config.ru
 
 group :development do
   if RUBY_VERSION >= '2.0.0'

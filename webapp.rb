@@ -4,9 +4,6 @@ require_relative 'lib/errors'
 # メインアプリケーションクラス
 # Sinatra::Baseを継承してモジュラースタイルのアプリケーションを構築
 class WebApp < Sinatra::Base
-  # Twitter Bootstrap用アセットパイプラインを登録
-  register Sinatra::Twitter::Bootstrap::Assets
-  
   # 開発環境用の設定
   configure :development do
     # ファイル変更時の自動リロード機能を有効化
