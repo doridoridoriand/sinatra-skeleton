@@ -7,14 +7,18 @@ gem "slim"
 gem "redcarpet"
 gem "sass"
 gem "rack-protection"
+gem "rack", "~> 3.2"
 
 group :development do
   gem "byebug", "~> 11.1"
-  gem "pry-rescue"
+
+
+
   gem "tapp"
 
   gem "thin", require: false
   gem "guard", "~> 2.0", require: false
+  gem "lumberjack", "~> 1.2"
   gem "guard-shotgun"
   gem "rack-livereload"
   gem "guard-livereload", require: false
