@@ -9,11 +9,7 @@ gem "sass"
 gem "rack-protection"
 
 group :development do
-  if RUBY_VERSION >= '2.0.0'
-    gem "pry-byebug"
-  else
-    gem "pry-debugger"
-  end
+  gem "byebug", "~> 11.1"
   gem "pry-rescue"
   gem "tapp"
 
@@ -24,6 +20,8 @@ group :development do
   gem "guard-livereload", require: false
 
   gem "forgery"
+  gem "eventmachine", "~> 1.2"
+  gem "ffi", "~> 1.15"
 end
 
 group :test do
