@@ -3,6 +3,13 @@
     <h1 class="display-3">500</h1>
     <h2 class="mb-3">エラーが発生しました</h2>
     <p class="lead text-muted mb-4">問題が発生しました。時間を置いて再度お試しください。</p>
-    <a class="btn btn-primary" href="/">トップに戻る</a>
+    <% if settings.development? && @error %>
+      <div class="alert alert-danger text-start mt-3" role="alert">
+        <h3 class="h5">エラー詳細（開発環境のみ）</h3>
+        <p class="mb-1"><strong><%= @error.class %>:</strong> <%= @error.message %></p>
+        <pre class="small text-start mb-0"><%= @error.backtrace&.first(5)&.join("\n") %></pre>
+      </div>
+    <% end %>
+    <a class="btn btn-primary mt-3" href="/">トップに戻る</a>
   </div>
 </div>

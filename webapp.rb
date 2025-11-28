@@ -10,8 +10,19 @@ class WebApp < Sinatra::Base
 
   # 開発環境用の設定
   configure :development do
+    # Sinatraのデフォルト例外ページではなくカスタムハンドラを使う
+    set :show_exceptions, :after_handler
+    set :dump_errors, true
+    set :raise_errors, false
     # ファイル変更時の自動リロード機能を有効化
     register Sinatra::Reloader
+  end
+
+  # 本番環境用の設定
+  configure :production do
+    set :show_exceptions, false
+    set :dump_errors, false
+    set :raise_errors, false
   end
 
   # テスト環境用の設定
@@ -19,6 +30,8 @@ class WebApp < Sinatra::Base
     # テスト実行時はRack::Protectionを無効化
     # （CSRFトークンのチェックをスキップするため）
     set :protection, false
+    set :show_exceptions, false
+    set :raise_errors, false
   end
 
   # セッションのセキュリティ設定を強化
@@ -119,6 +132,19 @@ class WebApp < Sinatra::Base
   error MyApp::ForbiddenError do |e|
     status 403  # Forbidden
     erb :error_403, layout: :layout_1col
+  end
+
+  # CSRFトークン検証失敗時のハンドリング
+  error Rack::Protection::AuthenticityToken::InvalidToken do |e|
+    @title = "不正なリクエストです"
+    logger.warn "CSRF token validation failed: #{e.message}"
+    status 403
+
+    if request.xhr?
+      json error: 'Forbidden', status: 403
+    else
+      erb :error_csrf, layout: :layout_1col
+    end
   end
 
   helpers do
@@ -259,5 +285,16 @@ class WebApp < Sinatra::Base
       project_store.delete_if { |p| p[:id] == project[:id] }
     end
     redirect "/projects?deleted=1"
+  end
+
+  # テスト用ヘルパールート（本番環境では無効）
+  if settings.test?
+    get "/__spec__/trigger_error" do
+      raise StandardError, "Intentional error for test"
+    end
+
+    get "/__spec__/trigger_csrf_error" do
+      raise Rack::Protection::AuthenticityToken::InvalidToken, "Invalid token for test"
+    end
   end
 end
