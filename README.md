@@ -180,6 +180,16 @@ bundle config set --local without 'development test'
 bundle install --deployment
 ```
 
+### Docker
+
+```bash
+# ビルド (IMAGE_NAMEでタグ指定、デフォルト: sinatra-skeleton:dev)
+bundle exec rake docker:build
+
+# マルチアーキのビルド&push（REGISTRY_IMAGEなどはtools/release.sh参照）
+bundle exec rake docker:release
+```
+
 3. **Rackサーバーの起動**
 
 Passenger、Puma、Unicornなど、お好みのRackサーバーを使用できます：
