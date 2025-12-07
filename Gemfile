@@ -23,9 +23,9 @@ group :development do
   gem "rack-livereload"
   gem "guard-livereload", require: false
 
-  gem "forgery"
   gem "eventmachine", "~> 1.2"
-  gem "ffi", "~> 1.15"
+  gem "ffi", "~> 1.17"
+  gem "forgery"
 end
 
 group :test do
