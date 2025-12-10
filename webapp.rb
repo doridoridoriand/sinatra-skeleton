@@ -135,17 +135,20 @@ class WebApp < Sinatra::Base
   end
 
   # CSRFトークン検証失敗時のハンドリング
-  error Rack::Protection::AuthenticityToken::InvalidToken do |e|
-    @title = "不正なリクエストです"
-    logger.warn "CSRF token validation failed: #{e.message}"
-    status 403
-
-    if request.xhr?
-      json error: 'Forbidden', status: 403
-    else
-      erb :error_csrf, layout: :layout_1col
-    end
-  end
+  # rack-protection 4.x では、CSRF検証失敗時に例外をスローせず、
+  # 直接403レスポンスを返すため、このエラーハンドラーは不要になりました。
+  # 必要に応じて、403ステータスのハンドラーで対応してください。
+  # error Rack::Protection::InvalidToken do |e|
+  #   @title = "不正なリクエストです"
+  #   logger.warn "CSRF token validation failed: #{e.message}"
+  #   status 403
+  #
+  #   if request.xhr?
+  #     json error: 'Forbidden', status: 403
+  #   else
+  #     erb :error_csrf, layout: :layout_1col
+  #   end
+  # end
 
   helpers do
     def csrf_token
