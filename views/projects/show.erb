@@ -1,0 +1,55 @@
+<div class="row mb-3">
+  <div class="col-12 d-flex justify-content-between align-items-start gap-3">
+    <div>
+      <p class="text-uppercase text-muted small mb-1">Projects</p>
+      <h1 class="h3 mb-1"><%= @project[:name] %></h1>
+      <div class="text-muted small">Owner: <%= @project[:owner] %></div>
+    </div>
+    <div class="d-flex gap-2">
+      <a class="btn btn-outline-secondary" href="/projects">Back</a>
+      <a class="btn btn-primary" href="/projects/<%= @project[:id] %>/edit">Edit</a>
+      <form class="d-inline" method="post" action="/projects/<%= @project[:id] %>" onsubmit="return confirm('Delete this project?');">
+        <input type="hidden" name="_method" value="delete">
+        <input type="hidden" name="authenticity_token" value="<%= csrf_token %>">
+        <button type="submit" class="btn btn-outline-danger">Delete</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<% if params[:created] %>
+  <div class="alert alert-success" role="alert">
+    プロジェクトを作成しました。
+  </div>
+<% elsif params[:updated] %>
+  <div class="alert alert-success" role="alert">
+    プロジェクトを更新しました。
+  </div>
+<% end %>
+
+<div class="row">
+  <div class="col-lg-8">
+    <div class="card mb-3">
+      <div class="card-body">
+        <p class="text-muted small mb-1">Status</p>
+        <p class="mb-3">
+          <span class="badge text-bg-<%= @project[:status] == 'Done' ? 'success' : @project[:status] == 'Blocked' ? 'danger' : 'primary' %>"><%= @project[:status] %></span>
+        </p>
+        <p class="text-muted small mb-1">Notes</p>
+        <p class="mb-0"><%= @project[:description].to_s.empty? ? "説明はまだ追加されていません。" : @project[:description] %></p>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <h2 class="h6">Next steps</h2>
+        <ol class="small text-muted mb-0">
+          <li>ステータスを更新し、完了まで追跡</li>
+          <li>必要に応じて担当者を変更</li>
+          <li>完了したら Done にして一覧で確認</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>

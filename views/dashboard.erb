@@ -1,0 +1,93 @@
+<div class="row mb-4">
+  <div class="col-12 d-flex align-items-center justify-content-between">
+    <h1 class="mb-0">Dashboard</h1>
+    <a class="btn btn-primary" href="/projects/new">Add project</a>
+  </div>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-3">
+    <div class="card h-100">
+      <div class="card-body">
+        <p class="text-muted small mb-1">Projects</p>
+        <h3 class="mb-0"><%= @projects.size %></h3>
+        <p class="text-muted small mb-0">Tracked in-memory sample data</p>
+      </div>
+    </div>
+  </div>
+  <% project_statuses.each do |status| %>
+    <% count = @projects.count { |p| p[:status] == status } %>
+    <div class="col-md-3">
+      <div class="card h-100">
+        <div class="card-body">
+          <p class="text-muted small mb-1"><%= status %></p>
+          <h3 class="mb-0"><%= count %></h3>
+          <p class="text-muted small mb-0">Projects marked "<%= status %>"</p>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span class="fw-semibold">Project pipeline</span>
+        <a class="small" href="/projects">See all</a>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Owner</th>
+              <th scope="col">Status</th>
+              <th scope="col" class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @projects.each do |project| %>
+              <tr>
+                <td><a href="/projects/<%= project[:id] %>"><%= project[:name] %></a></td>
+                <td><%= project[:owner] %></td>
+                <td>
+                  <span class="badge text-bg-<%= project[:status] == 'Done' ? 'success' : project[:status] == 'Blocked' ? 'danger' : 'primary' %>">
+                    <%= project[:status] %>
+                  </span>
+                </td>
+                <td class="text-end">
+                  <a class="btn btn-sm btn-outline-secondary" href="/projects/<%= project[:id] %>/edit">Edit</a>
+                  <form class="d-inline" action="/projects/<%= project[:id] %>" method="post" onsubmit="return confirm('Delete this project?');">
+                    <input type="hidden" name="_method" value="delete">
+                    <input type="hidden" name="authenticity_token" value="<%= csrf_token %>">
+                    <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                  </form>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card h-100">
+      <div class="card-header fw-semibold">Recent activity</div>
+      <div class="card-body">
+        <% if @recent_people.any? %>
+          <ul class="list-unstyled mb-0">
+            <% @recent_people.each do |person| %>
+              <li class="mb-3">
+                <div class="fw-semibold"><%= person[:name] %></div>
+                <div class="text-muted small"><%= person[:role] %> · Joined <%= person[:joined].strftime('%Y-%m-%d') %></div>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <p class="text-muted mb-0">No activity to show yet.</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

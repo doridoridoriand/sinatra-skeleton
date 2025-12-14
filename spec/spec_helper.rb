@@ -5,7 +5,6 @@ Bundler.require(:default, :test)
 
 require 'rack/test'
 require 'rspec'
-require 'sinatra/twitter-bootstrap'
 
 require File.expand_path('../../webapp', __FILE__)
 

@@ -9,5 +9,8 @@ rescue
   nil
 end
 
+# メインアプリケーションを読み込み
 require File.expand_path(File.join('..','webapp'), __FILE__)
+
+# Rackアプリケーションを起動
 run WebApp
