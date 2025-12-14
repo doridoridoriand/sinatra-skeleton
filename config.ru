@@ -1,5 +1,7 @@
 require 'bundler'
-Bundler.require(:default, ENV['RACK_ENV'].to_sym)
+
+rack_env = ENV.fetch('RACK_ENV', 'development').to_sym
+Bundler.require(:default, rack_env)
 require "sinatra/twitter-bootstrap"
 begin
   use Rack::LiveReload, no_swf: true

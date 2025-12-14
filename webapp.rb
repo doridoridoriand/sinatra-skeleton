@@ -1,3 +1,5 @@
+require 'securerandom'
+
 class WebApp < Sinatra::Base
   register Sinatra::Twitter::Bootstrap::Assets
   configure :development do
