@@ -1,9 +1,5 @@
-# カスタムエラークラスを読み込み
-require "securerandom"
-require_relative 'lib/errors'
+require 'securerandom'
 
-# メインアプリケーションクラス
-# Sinatra::Baseを継承してモジュラースタイルのアプリケーションを構築
 class WebApp < Sinatra::Base
   PROJECTS_MUTEX = Mutex.new
   use Rack::MethodOverride
