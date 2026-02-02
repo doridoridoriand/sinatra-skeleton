@@ -1,4 +1,4 @@
-FROM ruby:3.2-slim AS builder
+FROM ruby:4.0-slim AS builder
 
 ENV APP_HOME=/app
 WORKDIR $APP_HOME
@@ -20,7 +20,7 @@ RUN bundle config set without 'development test' \
 
 COPY . .
 
-FROM ruby:3.2-slim
+FROM ruby:4.0-slim
 
 ENV APP_HOME=/app \
     RACK_ENV=production \
